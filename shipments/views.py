@@ -76,16 +76,20 @@ def list_items(request):
                                         print('1:',one_method)
                                         sec_method = asyncio.run(recurse_all(auth,url,category,result=[None],page = 1,method='FBB'))
                                         print('2:',sec_method)        
-                                        items.append(one_method)
-                                        items.append(sec_method)
-                                        result = auxy_list(items[0][0],category)
-                                        print('auxy:',result)
-                                        result = result+auxy_list(items[1][0],category)
-                                        print('final:',result)
-                                        iter_items = asyncio.run(all_items(auth,url,category,result))
-                                        print('iterm:',iter_items)
-                                        dic = {'response':result,'status_code':200,'data':iter_items}
-                                        return HttpResponse(json.dumps(dic))
+                                        if len(items) <= 0:
+                                                dic = {'response':result,'status_code':200,'data':None}
+                                                return HttpResponse(json.dumps(dic))     
+                                        else: 
+                                                items.append(one_method)
+                                                items.append(sec_method)                                                                                      
+                                                result = auxy_list(items[0][0],category)
+                                                print('auxy:',result)
+                                                result = result+auxy_list(items[1][0],category)
+                                                print('final:',result)
+                                                iter_items = asyncio.run(all_items(auth,url,category,result))
+                                                print('iterm:',iter_items)
+                                                dic = {'response':result,'status_code':200,'data':iter_items}
+                                                return HttpResponse(json.dumps(dic))
                                 else:
                                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
                                         return HttpResponse(json.dumps(dic))
@@ -194,8 +198,6 @@ def sync_all(request):
                 else:
                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
                         return HttpResponse(json.dumps(dic))    
-
-
 
 
 # def store_shipments(data,category):
