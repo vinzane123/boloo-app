@@ -109,19 +109,6 @@ async def recurse_all(auth,url,category,result=[],page=1,method='FBR'):
                         return result
 
 
-
-def list_all(category):
-                url = 'https://api.bol.com/retailer/'+category
-                if os.environ['expiry'] == str(0):
-                        dic = {'isSuccess':False,'details':'Please try after login','status_code':400}
-                        return dic
-                if token != None:
-                        auth = "Bearer "+os.environ['token']
-                        headers={'Accept':'application/vnd.retailer.v3+json','Authorization':auth}
-                        r= requests.get(url,headers=headers)
-                        return json.loads(r.text)
-
-
 def auxy_list(data,category):
         result = []
         if data and category:
@@ -140,13 +127,6 @@ def auxy_list(data,category):
                         return result
         else:
                 return None
-
-
-def store_shipments(data,category):
-        if data and category == 'shipments':
-                ins = Shipments(shipmentId=data['shipmentId'],category=category,shipmentDate=data['shipmentDate'],
-                        shipmentItems=data['shipmentItems'],transportId=data['transport']['transportId'])
-                ins.save()
 
 def store_items(ids,data,category):
         count=0
@@ -187,34 +167,6 @@ async def all_items(auth,uri,category,ids):
                                 count+=1        
                 return result
 
-
-
-@refresh_token
-@csrf_exempt
-def store_in_sync(request):
-        if request.method == 'GET':
-                myDict = dict(request.GET)
-                if 'category' in myDict:           
-                        category = request.GET['category']
-                        test = list_all(category)
-                        if 'isSuccess' in dict(test):
-                                return HttpResponse(json.dumps(test))
-
-                        # res = sync_items.delay(category)
-                        # data = json.loads(res.get(timeout=1))
-                        # data={}
-                        # data['%s' %(category)] = '%s' % ()
-
-                        else:
-                                jobs = group(process.s(item) for item in test[category])
-                                result = jobs.apply_async()                       
-                                for i in range(0,len(result.join())):
-                                        store_shipments(result.join()[i],category)
-                                return HttpResponse(result.join())                       
-                else:
-                        dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
-                        return HttpResponse(json.dumps(dic))                        
-
 @refresh_token
 @csrf_exempt
 def sync_all(request):
@@ -222,7 +174,6 @@ def sync_all(request):
                 myDict = dict(request.GET)
                 if 'category' in myDict:           
                         category = request.GET['category']
-                        # url = 'http://localhost:8000/getShipments'
                         url = URL_CLOUD
                         payload = {'category':category}
                         r = requests.get(url,params=payload)
@@ -243,4 +194,51 @@ def sync_all(request):
                 else:
                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
                         return HttpResponse(json.dumps(dic))    
+
+
+
+
+# def store_shipments(data,category):
+#         if data and category == 'shipments':
+#                 ins = Shipments(shipmentId=data['shipmentId'],category=category,shipmentDate=data['shipmentDate'],
+#                         shipmentItems=data['shipmentItems'],transportId=data['transport']['transportId'])
+#                 ins.save()
+
+# @refresh_token
+# @csrf_exempt
+# def store_in_sync(request):
+#         if request.method == 'GET':
+#                 myDict = dict(request.GET)
+#                 if 'category' in myDict:           
+#                         category = request.GET['category']
+#                         test = list_all(category)
+#                         if 'isSuccess' in dict(test):
+#                                 return HttpResponse(json.dumps(test))
+
+#                         # res = sync_items.delay(category)
+#                         # data = json.loads(res.get(timeout=1))
+#                         # data={}
+#                         # data['%s' %(category)] = '%s' % ()
+
+#                         else:
+#                                 jobs = group(process.s(item) for item in test[category])
+#                                 result = jobs.apply_async()                       
+#                                 for i in range(0,len(result.join())):
+#                                         store_shipments(result.join()[i],category)
+#                                 return HttpResponse(result.join())                       
+#                 else:
+#                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
+#                         return HttpResponse(json.dumps(dic))       
+# 
+# def list_all(category):
+#                 url = 'https://api.bol.com/retailer/'+category
+#                 if os.environ['expiry'] == str(0):
+#                         dic = {'isSuccess':False,'details':'Please try after login','status_code':400}
+#                         return dic
+#                 if token != None:
+#                         auth = "Bearer "+os.environ['token']
+#                         headers={'Accept':'application/vnd.retailer.v3+json','Authorization':auth}
+#                         r= requests.get(url,headers=headers)
+#                         return json.loads(r.text)                 
+
 
