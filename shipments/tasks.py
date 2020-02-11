@@ -10,6 +10,7 @@ import os
 import time
 from .auto_refresh import *
 from shipments.views import *
+from bol.settings import URL_CLOUD
 
 
 
@@ -18,7 +19,8 @@ from shipments.views import *
 @shared_task
 def sync_items(category):
     payload = {'category': category}
-    r = requests.get('http://localhost:8000/getShipments',params=payload)
+    # r = requests.get('http://localhost:8000/getShipments',params=payload)
+    r = requests.get(URL_CLOUD,params=payload)
     return r.text
 
 # scaled-sync

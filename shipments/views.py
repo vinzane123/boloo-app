@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from bol.settings import client_id,client_secret
+from bol.settings import client_id,client_secret,URL_CLOUD,URL_LOCAL
 import datetime
 import json
 import re
@@ -145,7 +145,7 @@ def store_items(ids,data,category):
                         ins.save()
                         count+=1
         elif category == 'orders':
-                for i in data:
+                for i in data:  
                         ins = Items(id=ids[count],data=data[count],status='open')
                         ins.save()
         else:
@@ -206,7 +206,8 @@ def sync_all(request):
                 myDict = dict(request.GET)
                 if 'category' in myDict:           
                         category = request.GET['category']
-                        url = 'http://localhost:8000/getShipments'
+                        # url = 'http://localhost:8000/getShipments'
+                        url = URL_CLOUD
                         payload = {'category':category}
                         r = requests.get(url,params=payload)
                         r_dir = dict(json.loads(r.text))
