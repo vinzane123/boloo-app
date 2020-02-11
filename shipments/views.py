@@ -139,6 +139,7 @@ def store_shipments(data,category):
 
 def store_items(ids,data,category):
         count=0
+        print('herokustore:')
         if category == 'shipments':
                 for i in data:
                         ins = Items(id=ids[count],data=data[count],status='shipment')
@@ -211,6 +212,7 @@ def sync_all(request):
                         payload = {'category':category}
                         r = requests.get(url,params=payload)
                         r_dir = dict(json.loads(r.text))
+                        print('heroku:',r_dir)
                         if 'isSuccess' in r_dir:
                                 return HttpResponse(r.text)
                         else:
@@ -219,6 +221,7 @@ def sync_all(request):
                                 print("yedu:",result.join())         
                                 store_items(result.join(),r_dir['data'],category)
                                 dic = {'isSuccess':True,'details':'Data stored successfully','sync_items':result.join(),'status_code':200}
+                                print('heroku1:',dic)
                                 return HttpResponse(json.dumps(dic))                       
                 else:
                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
