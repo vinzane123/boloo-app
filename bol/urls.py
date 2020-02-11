@@ -23,4 +23,5 @@ urlpatterns = [
     path('getToken/',token),
     path('getShipments/',list_items),
     path('syncDb/',store_in_sync),
+    path('sync/',sync_all),
 ]
