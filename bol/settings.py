@@ -23,13 +23,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'x5&pz(qx_qiz#5)a3fbdt1rqru4e7mi0*-is53cc@1x%kvso+r'
-SECRET_KEY = process.env.SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 URL_CLOUD = 'http://boloo-app.herokuapp.com/getShipments'
 URL_LOCAL ='http://localhost:8000/getShipments'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+
+DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = []
 
@@ -61,10 +63,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'bol.urls'
 
 # client_id = '86b40eb4-ecf5-4c5d-9c20-bd47e85684b8'
-client_id = process.env.client_id
+client_id = os.environ.get('client_id')
 
 # client_secret = 'AU9zaVLOLhua7C3UpJcdmCkWvVZSDn9fh9JGxpXoP6mZYxMRwlBhLQ1sb0VILk7DWsTxM4jKXKZaxWogb0J_NA'
-client_secret = process.env.client_secret
+client_secret = os.environ.get('client_secret')
 
 url = 'http://localhost:8000/getToken/'
 
@@ -150,7 +152,7 @@ STATIC_URL = '/static/'
 # BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_BROKER_URL = process.env.CELERY_BROKER_URL
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 
 CELERY_ACCEPT_CONTENT = ['application/json']
