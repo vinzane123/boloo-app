@@ -22,20 +22,46 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'x5&pz(qx_qiz#5)a3fbdt1rqru4e7mi0*-is53cc@1x%kvso+r'
-SECRET_KEY = os.environ.get('SECRET_KEY')
 
-URL_CLOUD = 'http://boloo-app.herokuapp.com/getShipments'
-URL_LOCAL ='http://localhost:8000/getShipments'
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-DEBUG = os.environ.get('DEBUG', False)
+# DEBUG = os.environ.get('DEBUG', False)
+# URL_CLOUD ='http://localhost:8000/getShipments'
+# SECRET_KEY = 'x5&pz(qx_qiz#5)a3fbdt1rqru4e7mi0*-is53cc@1x%kvso+r'
+# client_secret = 'AU9zaVLOLhua7C3UpJcdmCkWvVZSDn9fh9JGxpXoP6mZYxMRwlBhLQ1sb0VILk7DWsTxM4jKXKZaxWogb0J_NA'
+# client_id = '86b40eb4-ecf5-4c5d-9c20-bd47e85684b8'
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.path.join(BASE_DIR, 'db.mysql'),
+    }
+}
+
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+URL_CLOUD = 'https://boloo-app.herokuapp.com/getShipments'
+client_secret = os.environ.get('client_secret')
+client_id = os.environ.get('client_id')
+CELERY_BROKER_URL = 'amqp://boloo-app.herokuapp.com'
+
+
 
 ALLOWED_HOSTS = []
-
-
 
 
 INSTALLED_APPS = [
@@ -62,11 +88,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'bol.urls'
 
-# client_id = '86b40eb4-ecf5-4c5d-9c20-bd47e85684b8'
-client_id = os.environ.get('client_id')
-
-# client_secret = 'AU9zaVLOLhua7C3UpJcdmCkWvVZSDn9fh9JGxpXoP6mZYxMRwlBhLQ1sb0VILk7DWsTxM4jKXKZaxWogb0J_NA'
-client_secret = os.environ.get('client_secret')
 
 url = 'http://localhost:8000/getToken/'
 
@@ -94,19 +115,6 @@ WSGI_APPLICATION = 'bol.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.path.join(BASE_DIR, 'db.mysql'),
-    }
-}
 
 
 # Password validation
@@ -151,16 +159,13 @@ STATIC_URL = '/static/'
 #celery-things
 # BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
 # CELERY_BROKER_URL = 'amqp://localhost'
-
-CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL']
-CELERY_RESULT_BACKEND=os.environ['CELERY_BROKER_URL']
-
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
-# CELERY_RESULT_BACKEND='amqp://'
+CELERY_RESULT_BACKEND='amqp://'
 
 
 django_heroku.settings(locals())

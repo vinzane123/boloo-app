@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from bol.settings import client_id,client_secret,URL_CLOUD,URL_LOCAL
+from bol.settings import client_id,client_secret,URL_CLOUD
 import datetime
 import json
 import re
@@ -12,7 +12,7 @@ import os
 import time
 from shipments.models import *
 from .auto_refresh import *
-from .tasks import sync_items,process
+from .tasks import sync_items,process,sync_test
 from celery import group
 import asyncio
 
@@ -23,6 +23,17 @@ expiry =  0
 
 
 @csrf_exempt
+def test(request):
+        ls = [1,2,3,4,5]
+        print('here')
+        jobs = group(sync_test.s(item) for item in ls)
+        result = jobs.apply_async()
+        print('no?')
+        print(result.join())
+        print('why/')
+        return HttpResponse(result.get(timeout=1))
+
+@csrf_exempt
 def token(request):
         if request.method == 'POST':
                 url = "https://login.bol.com/token"
@@ -31,7 +42,9 @@ def token(request):
                         id = request.POST['client_id']
                         secret = request.POST['client_secret']
                         payload = {'client_id': id, 'client_secret': secret,'grant_type':'client_credentials'}
+                        print(time.time())
                         r = requests.post(url, data=payload)
+                        print(time.time())
                         respon = json.loads(r.text)
                         os.environ['token'] = respon['access_token']
                         token = respon['access_token']
@@ -214,8 +227,10 @@ def sync_all(request):
                         r_dir = dict(json.loads(r.text))
                         print('heroku:',r_dir)
                         if 'isSuccess' in r_dir:
+                                print('here?')
                                 return HttpResponse(r.text)
                         else:
+                                print('else?')
                                 jobs = group(process.s(item) for item in r_dir['response'])
                                 result = jobs.apply_async()
                                 print("yedu:",result.join())         

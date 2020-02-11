@@ -21,6 +21,9 @@ class Shipments(models.Model):
     def __str__(self):
         return self.shipmentId
 
+    
+# Current-used model.
+
 class Items(models.Model):
     id = models.IntegerField(unique=True,null=False,default=None,primary_key=True)
     data = models.TextField(null=False,default=None)

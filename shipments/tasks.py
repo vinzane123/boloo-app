@@ -19,7 +19,6 @@ from bol.settings import URL_CLOUD
 @shared_task
 def sync_items(category):
     payload = {'category': category}
-    # r = requests.get('http://localhost:8000/getShipments',params=payload)
     r = requests.get(URL_CLOUD,params=payload)
     return r.text
 
@@ -29,4 +28,8 @@ def sync_items(category):
 def process(item):
     return item
     
+
+@shared_task
+def sync_test(ls):
+    return ls
 

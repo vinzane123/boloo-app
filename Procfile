@@ -1,2 +1,2 @@
-web: gunicorn bol.wsgi --log-file -
-celery -A bol  worker --loglevel=info
+#web: gunicorn bol.wsgi --log-file -
+worker: celery -A bol worker --l info
