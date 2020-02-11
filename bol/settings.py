@@ -153,7 +153,7 @@ STATIC_URL = '/static/'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_BROKER_URL = 'amqp://localhost'
 
-CELERY_BROKER_URL = os.environ.get['CELERY_BROKER_URL']
+CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL']
 CELERY_RESULT_BACKEND=os.environ['CELERY_BROKER_URL']
 
 CELERY_ACCEPT_CONTENT = ['application/json']
