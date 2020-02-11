@@ -66,26 +66,24 @@ def list_items(request):
                         return HttpResponse(json.dumps(dic))
                 if token != None:
                         auth = "Bearer "+os.environ['token']
-                        # headers={'Accept':'application/vnd.retailer.v3+json','Authorization':auth}
-                        # payload = {'maxCapacity':'7','timeToLive':'1','timeUnit':'MINUTES','page':3}
                         if request.method == 'GET':
                                 myDict = dict(request.GET)
                                 if 'category' in myDict:
                                         category=request.GET['category']
-                                        # r= requests.get(url,headers=headers,params=payload)
-                                        # print("none",r.text)
                                         url = url+category
                                         result=[]
                                         one_method = asyncio.run(recurse_all(auth,url,category,result,page = 1,method='FBR'))
+                                        print('1:',one_method)
                                         sec_method = asyncio.run(recurse_all(auth,url,category,result=[None],page = 1,method='FBB'))
+                                        print('2:',sec_method)        
                                         items.append(one_method)
                                         items.append(sec_method)
-                                        # data = json.loads(items)
-                                        # result = auxy_list(data,category)
                                         result = auxy_list(items[0][0],category)
+                                        print('auxy:',result)
                                         result = result+auxy_list(items[1][0],category)
+                                        print('final:',result)
                                         iter_items = asyncio.run(all_items(auth,url,category,result))
-                                        # print("items:::",reponse)
+                                        print('iterm:',iter_items)
                                         dic = {'response':result,'status_code':200,'data':iter_items}
                                         return HttpResponse(json.dumps(dic))
                                 else:
@@ -170,19 +168,23 @@ def store_items(ids,data,category):
 
 
 async def all_items(auth,uri,category,ids):
+                print('all_items:')
                 result = []
                 count=0
                 headers={'Accept':'application/vnd.retailer.v3+json','Authorization':auth}
                 payload = {'maxCapacity':'7','timeToLive':'1','timeUnit':'MINUTES'} 
                 for i in ids:
                         if  count%6 == 0 and count != 0 :
+                                print('count:',count)
                                 # time.sleep(60) 
-                                await asyncio.sleep(60)                           
+                                await asyncio.sleep(60) 
+                                count+=1                          
                         else:
+                                print('check_else:',count)
                                 urs = uri+'/'+str(i)
                                 r= requests.get(urs,headers=headers,params=payload)
                                 result.append(json.loads(r.text))
-                                count+=1
+                                count+=1        
                 return result
 
 
