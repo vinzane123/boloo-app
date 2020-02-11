@@ -152,14 +152,15 @@ STATIC_URL = '/static/'
 # BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
+CELERY_BROKER_URL = os.environ.get['CELERY_BROKER_URL']
+CELERY_RESULT_BACKEND=os.environ['CELERY_BROKER_URL']
 
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
-CELERY_RESULT_BACKEND='amqp://'
+# CELERY_RESULT_BACKEND='amqp://'
 
 
 django_heroku.settings(locals())
