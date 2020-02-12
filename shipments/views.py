@@ -74,14 +74,18 @@ def list_items(request):
                                         result=[]
                                         one_method = asyncio.run(recurse_all(auth,url,category,result,page = 1,method='FBR'))
                                         print('1:',one_method)
+                                        if len(one_method) >=0:
+                                                items.append(one_method) 
                                         sec_method = asyncio.run(recurse_all(auth,url,category,result=[None],page = 1,method='FBB'))
-                                        print('2:',sec_method)        
-                                        if len(items) <= 0:
-                                                dic = {'response':result,'status_code':200,'data':None}
+                                        if len(sec_method) >=0:
+                                                items.append(sec_method)
+                                        print('2:',sec_method)  
+                                        print('l:',items[0],'2:',items[1])      
+                                        if not items[0] and not items[1] :
+                                                print('3:',items)
+                                                dic = {'isSuccess':True,'response':'No data available.','status_code':200,'data':None}
                                                 return HttpResponse(json.dumps(dic))     
-                                        else: 
-                                                items.append(one_method)
-                                                items.append(sec_method)                                                                                      
+                                        else:                                                                                      
                                                 result = auxy_list(items[0][0],category)
                                                 print('auxy:',result)
                                                 result = result+auxy_list(items[1][0],category)
@@ -189,6 +193,8 @@ def sync_all(request):
                         else:
                                 print('else?')
                                 jobs = group(process.s(item) for item in r_dir['response'])
+                                # another_job = process.chunks(r_dir['response'],10).group()
+                                # another_result = another_job..apply_async()
                                 result = jobs.apply_async()
                                 print("yedu:",result.join())         
                                 store_items(result.join(),r_dir['data'],category)
@@ -198,6 +204,24 @@ def sync_all(request):
                 else:
                         dic = {'isSuccess':False,'details':'Please provide category','status_code':401}
                         return HttpResponse(json.dumps(dic))    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # def store_shipments(data,category):

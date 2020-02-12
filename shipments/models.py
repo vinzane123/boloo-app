@@ -29,6 +29,6 @@ class Items(models.Model):
     data = models.TextField(null=False,default=None)
     status = models.TextField(null=False,default='Open')
 
-    def __str__(self):
+    def __str__(self):  
         return self.id
 
